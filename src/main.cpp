@@ -53,7 +53,7 @@ int main()
   // (Opcional) ejecutar alguna funcionalidad
   std::cout << "Ejecutando estimador y logger..." << std::endl;
   float thrust = 10.0; // Fuerza de empuje en Newtons
-  float acceleration = 2.0;   // Aceleración en m/s^2
+  double acceleration = 2.0;   // Aceleración en m/s^2
   param_estimation.computeAll(thrust, acceleration);
   return 0;
 
