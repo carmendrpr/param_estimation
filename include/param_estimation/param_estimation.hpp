@@ -39,26 +39,26 @@
 class ParamEstimation
 {
 public:
-  ParamEstimation(double real_mass);
+  ParamEstimation(float real_mass);
   ~ParamEstimation();
 
   // PRIVATE MEMBERS
 
 private:
-  double real_mass_;
-  double acceleration_;
-  double thrust_;
-  double estimated_mass_;
-  double correction_factor_;
-  double mass_error_;
+  float real_mass_;
+  float acceleration_;
+  float thrust_;
+  float estimated_mass_;
+  float correction_factor_;
+  float mass_error_;
 
-  std::vector<double> mass_history_;
-  std::vector<double> thrust_history_;
-  std::vector<double> thrust_time_history_;
-  std::vector<double> acceleration_history_;
-  std::vector<double> acceleration_time_history_;
-  std::vector<double> mass_error_history_;
-  std::vector<double> correction_factor_history_;
+  std::vector<float> mass_history_;
+  std::vector<float> thrust_history_;
+  std::vector<float> thrust_time_history_;
+  std::vector<float> acceleration_history_;
+  std::vector<float> acceleration_time_history_;
+  std::vector<float> mass_error_history_;
+  std::vector<float> correction_factor_history_;
 
 // PRIVATE FUNCTIONS
 
@@ -68,21 +68,21 @@ private:
   * @param thrust Thrust value (z axis)
   * @param a_z Acceleration in z axis
   */
-  void computeMass(double & thrust, double & a_z);
+  void computeMass(float & thrust, float & a_z);
   /**
    * @brief
    * Computes the mass error based on the real and estimated mass
    * @param real_mass Real mass of the drone
    * @param estimated_mass Estimated mass of the drone
    */
-  void computeMassError(double & real_mass, double & estimated_mass);
+  void computeMassError(float & real_mass, float & estimated_mass);
   /**
    * @brief
    * Computes the correction factor based on the real and estimated mass
    * @param real_mass Real mass of the drone
    * @param estimated_mass Estimated mass of the drone
    */
-  void computeCorrectionFactor(double & real_mass, double & estimated_mass);
+  void computeCorrectionFactor(float & real_mass, float & estimated_mass);
   /**
    * @brief
    * Computes the RMSE based on the real and estimated mass
@@ -95,21 +95,21 @@ private:
   // PUBLIC FUNCTIONS -> getters
 
 public:
-  void computeAll(double & thrust, double & a_z);
-  double getEstimatedMass();
-  double getRealMass();
-  double getMassError();
-  double getCorrectionFactor();
-  double getThrust();
-  double getAcceleration();
+  void computeAll(float & thrust, float & a_z);
+  float getEstimatedMass();
+  float getRealMass();
+  float getMassError();
+  float getCorrectionFactor();
+  float getThrust();
+  float getAcceleration();
 
-  const std::vector<double> & getMassHistory();
-  const std::vector<double> & getThrustHistory();
-  const std::vector<double> & getThrustTimeHistory();
-  const std::vector<double> & getAccelerationHistory();
-  const std::vector<double> & getAccelerationTimeHistory();
-  const std::vector<double> & getMassErrorHistory();
-  const std::vector<double> & getCorrectionFactorHistory();
+  const std::vector<float> & getMassHistory();
+  const std::vector<float> & getThrustHistory();
+  const std::vector<float> & getThrustTimeHistory();
+  const std::vector<float> & getAccelerationHistory();
+  const std::vector<float> & getAccelerationTimeHistory();
+  const std::vector<float> & getMassErrorHistory();
+  const std::vector<float> & getCorrectionFactorHistory();
 
 };
 
