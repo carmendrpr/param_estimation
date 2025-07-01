@@ -33,35 +33,26 @@
 
  #include <vector>
  #include <cmath>
+ #include <iostream>
 
 #ifndef __PARAM_ESTIMATION_HPP__
 #define __PARAM_ESTIMATION_HPP__
 class ParamEstimation
 {
 public:
-  ParamEstimation(double real_mass);
-  ~ParamEstimation();
+  ParamEstimation(double initial_mass);
+  ~ParamEstimation() {}
 
-  // PRIVATE MEMBERS
+  // MEMBER ATRIBUTES
 
 private:
-  double real_mass_;
-  double acceleration_;
-  float thrust_;
   double estimated_mass_;
-  double correction_factor_;
-  double mass_error_;
+  double last_estimated_mass_;
+  double threshold_;
 
-  std::vector<double> mass_history_;
-  std::vector<float> thrust_history_;
-  std::vector<float> thrust_time_history_;
-  std::vector<double> acceleration_history_;
-  std::vector<double> acceleration_time_history_;
-  std::vector<double> mass_error_history_;
-  std::vector<double> correction_factor_history_;
+// PUBLIC FUNCTIONS
 
-// PRIVATE FUNCTIONS
-
+public:
   /**
   * @brief
   * Computes the mass based on the thrust and acceleration
@@ -69,47 +60,18 @@ private:
   * @param a_z Acceleration in z axis
   */
   void computeMass(float & thrust, double & a_z);
+  void set_threshold(double threshold);
+  double getEstimatedMass();
+// PRIVATE FUNCTIONS
+
+private:
   /**
    * @brief
    * Computes the mass error based on the real and estimated mass
    * @param real_mass Real mass of the drone
    * @param estimated_mass Estimated mass of the drone
    */
-  void computeMassError(double & real_mass, double & estimated_mass);
-  /**
-   * @brief
-   * Computes the correction factor based on the real and estimated mass
-   * @param real_mass Real mass of the drone
-   * @param estimated_mass Estimated mass of the drone
-   */
-  void computeCorrectionFactor(double & real_mass, double & estimated_mass);
-  /**
-   * @brief
-   * Computes the RMSE based on the real and estimated mass
-   * @param real_mass Real mass of the drone
-   * @param estimated_mass Estimated mass of the drone
-   */
-  void ComputeRMSE();
-
-
-  // PUBLIC FUNCTIONS -> getters
-
-public:
-  void computeAll(float & thrust, double & a_z);
-  double getEstimatedMass();
-  double getRealMass();
-  double getMassError();
-  double getCorrectionFactor();
-  float getThrust();
-  double getAcceleration();
-
-  const std::vector<double> & getMassHistory();
-  const std::vector<float> & getThrustHistory();
-  const std::vector<float> & getThrustTimeHistory();
-  const std::vector<double> & getAccelerationHistory();
-  const std::vector<double> & getAccelerationTimeHistory();
-  const std::vector<double> & getMassErrorHistory();
-  const std::vector<double> & getCorrectionFactorHistory();
+  bool computeMassError(double & estimated_mass, double & last_estimated_mass);
 
 };
 

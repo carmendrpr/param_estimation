@@ -33,131 +33,38 @@
 
  #include "param_estimation.hpp"
 
-ParamEstimation::ParamEstimation(double real_mass)
-: real_mass_(real_mass) {}
-ParamEstimation::~ParamEstimation()
+ParamEstimation::ParamEstimation(double initial_mass)
 {
+  last_estimated_mass_ = initial_mass;
 }
+
+
 void ParamEstimation::computeMass(float & thrust, double & a_z)
 {
-  thrust_ = thrust;
-  acceleration_ = a_z;
-
-  if (std::abs(acceleration_) > 1e-6) {
-    estimated_mass_ = thrust_ / acceleration_;
-  } else {
-    estimated_mass_ = 0.0;
+  double mass;
+  if (std::abs(a_z) > 1e-6 && thrust > 0.0) {
+    mass = thrust / a_z;
+    if (computeMassError(mass, last_estimated_mass_) ) {
+      estimated_mass_ = mass;
+      last_estimated_mass_ = estimated_mass_;
+    } else {
+      estimated_mass_ = last_estimated_mass_;
+    }
   }
-
-  mass_history_.push_back(estimated_mass_);
-  thrust_history_.push_back(thrust_);
-  acceleration_history_.push_back(acceleration_);
+  estimated_mass_ = last_estimated_mass_;
 }
 
-void ParamEstimation::computeMassError(double & real_mass, double & estimated_mass)
+bool ParamEstimation::computeMassError(double & compute_mass, double & last_estimated_mass)
 {
-  real_mass_ = real_mass;
-  estimated_mass_ = estimated_mass;
-
-  mass_error_ = std::abs(estimated_mass_ - real_mass_);
-  mass_error_history_.push_back(mass_error_);
+  return std::abs(compute_mass - last_estimated_mass) > threshold_;
 }
 
-void ParamEstimation::computeCorrectionFactor(double & real_mass, double & estimated_mass)
+void ParamEstimation::set_threshold(double threshold)
 {
-  real_mass_ = real_mass;
-  estimated_mass_ = estimated_mass;
-
-  if (std::abs(estimated_mass_) > 1e-6) {
-    correction_factor_ = real_mass_ / estimated_mass_;
-  } else {
-    correction_factor_ = 0.0;
-  }
-
-  correction_factor_history_.push_back(correction_factor_);
+  threshold_ = threshold;
 }
-
-void ParamEstimation::ComputeRMSE()
-{
-  if (mass_error_history_.empty()) {return;}
-
-  float sum_sq_error = 0.0;
-  for (const auto & err : mass_error_history_) {
-    sum_sq_error += err * err;
-  }
-  float rmse = std::sqrt(sum_sq_error / mass_error_history_.size());
-}
-
-void ParamEstimation::computeAll(float & thrust, double & aceleration)
-{
-  computeMass(thrust, aceleration);
-  computeMassError(this->real_mass_, this->estimated_mass_);
-  computeCorrectionFactor(this->real_mass_, this->estimated_mass_);
-  ComputeRMSE();
-}
-
 
 double ParamEstimation::getEstimatedMass()
 {
   return estimated_mass_;
-}
-
-double ParamEstimation::getRealMass()
-{
-  return real_mass_;
-}
-
-double ParamEstimation::getMassError()
-{
-  return mass_error_;
-}
-
-double ParamEstimation::getCorrectionFactor()
-{
-  return correction_factor_;
-}
-
-float ParamEstimation::getThrust()
-{
-  return thrust_;
-}
-
-double ParamEstimation::getAcceleration()
-{
-  return acceleration_;
-}
-
-const std::vector<double> & ParamEstimation::getMassHistory()
-{
-  return mass_history_;
-}
-
-const std::vector<float> & ParamEstimation::getThrustHistory()
-{
-  return thrust_history_;
-}
-
-const std::vector<float> & ParamEstimation::getThrustTimeHistory()
-{
-  return thrust_time_history_;
-}
-
-const std::vector<double> & ParamEstimation::getAccelerationHistory()
-{
-  return acceleration_history_;
-}
-
-const std::vector<double> & ParamEstimation::getAccelerationTimeHistory()
-{
-  return acceleration_time_history_;
-}
-
-const std::vector<double> & ParamEstimation::getMassErrorHistory()
-{
-  return mass_error_history_;
-}
-
-const std::vector<double> & ParamEstimation::getCorrectionFactorHistory()
-{
-  return correction_factor_history_;
 }
