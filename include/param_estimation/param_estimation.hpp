@@ -33,6 +33,7 @@
 
  #include <vector>
  #include <cmath>
+ #include <numeric>
  #include <iostream>
 
 #ifndef __PARAM_ESTIMATION_HPP__
@@ -40,15 +41,21 @@
 class ParamEstimation
 {
 public:
-  ParamEstimation(double initial_mass);
+  ParamEstimation(
+    double initial_mass, double threshold, double alpha,
+    size_t n_samples);
   ~ParamEstimation() {}
 
   // MEMBER ATRIBUTES
 
 private:
   double estimated_mass_;
+  std::vector<double> estimated_mass_vector_;
   double last_estimated_mass_;
-  double threshold_;
+  double last_filtered_mass_;
+  double threshold_ = 0.0;
+  double alpha_ = 1.0;
+  size_t n_samples_ = 1;
 
 // PUBLIC FUNCTIONS
 
@@ -59,9 +66,15 @@ public:
   * @param thrust Thrust value (z axis)
   * @param a_z Acceleration in z axis
   */
-  void computeMass(float & thrust, double & a_z);
+  void computeMass(float & thrust, std::vector<double> & a_z);
   void set_threshold(double threshold);
+  void set_alpha(double alpha);
+  void set_n_samples(size_t n_samples);
   double getEstimatedMass();
+  double getThreshold();
+  double getAlpha();
+  size_t getNSamples();
+
 // PRIVATE FUNCTIONS
 
 private:
@@ -72,6 +85,27 @@ private:
    * @param estimated_mass Estimated mass of the drone
    */
   bool computeMassError(double & estimated_mass, double & last_estimated_mass);
+  /**
+   * @brief
+   * Computes the mean of a vector
+   * @param vec Vector to compute the mean
+   * @return Mean value of the vector
+   */
+  double computedMeanFromVector(std::vector<double> & vec);
+  /**
+   * @brief
+   * Compute a low pass filter for the mass data
+   * @param mass Mass value to filter
+   * @return Filtered mass value
+   */
+  double lowPassFiltered(double & mass);
+  /**
+   * @brief
+   * Computes the mean of the last n samples of a vector
+   * @param vec Vector to compute the mean
+   * @return Mean value of the last n samples
+   */
+  double computedMeanFromNSamples(const std::vector<double> & vec);
 
 };
 

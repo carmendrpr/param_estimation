@@ -35,15 +35,15 @@
 
 void positiveValues()
 {
-  ParamEstimation param_estimation = ParamEstimation(1.52);
+  ParamEstimation param_estimation = ParamEstimation(1.52, 0.1, 0.5, 1);
   std::vector<float> thrust = {14.896f, 17.0f, 12.0f};
-  double aceleration = 9.81;
+  std::vector<double> aceleration = {9.81, 9.7, 9.86, 9.78};
   param_estimation.set_threshold(0.1);
   for (auto & t : thrust) {
     param_estimation.computeMass(t, aceleration);
-    double mass = param_estimation.getEstimatedMass();
-    printf("Estimated mass: %.2f\n", mass);
   }
+  double mass = param_estimation.getEstimatedMass();
+  printf("Filtered mass: %.2f\n", mass);
 }
 
 int main()
