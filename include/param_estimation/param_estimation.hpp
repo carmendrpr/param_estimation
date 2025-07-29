@@ -33,84 +33,79 @@
 
  #include <vector>
  #include <cmath>
+ #include <numeric>
+ #include <iostream>
 
 #ifndef __PARAM_ESTIMATION_HPP__
 #define __PARAM_ESTIMATION_HPP__
 class ParamEstimation
 {
 public:
-  ParamEstimation(double real_mass);
-  ~ParamEstimation();
+  ParamEstimation(
+    double initial_mass, double threshold, double alpha,
+    size_t n_samples);
+  ~ParamEstimation() {}
 
-  // PRIVATE MEMBERS
+  // MEMBER ATRIBUTES
 
 private:
-  double real_mass_;
-  double acceleration_;
-  float thrust_;
   double estimated_mass_;
-  double correction_factor_;
-  double mass_error_;
+  std::vector<double> estimated_mass_vector_;
+  double last_estimated_mass_;
+  double last_filtered_mass_;
+  double threshold_ = 0.0;
+  double alpha_ = 1.0;
+  size_t n_samples_ = 1;
 
-  std::vector<double> mass_history_;
-  std::vector<float> thrust_history_;
-  std::vector<float> thrust_time_history_;
-  std::vector<double> acceleration_history_;
-  std::vector<double> acceleration_time_history_;
-  std::vector<double> mass_error_history_;
-  std::vector<double> correction_factor_history_;
+// PUBLIC FUNCTIONS
 
-// PRIVATE FUNCTIONS
-
+public:
   /**
   * @brief
   * Computes the mass based on the thrust and acceleration
   * @param thrust Thrust value (z axis)
   * @param a_z Acceleration in z axis
   */
-  void computeMass(float & thrust, double & a_z);
+  void computeMass(float & thrust, std::vector<double> & a_z);
+  void set_threshold(double threshold);
+  void set_alpha(double alpha);
+  void set_n_samples(size_t n_samples);
+  double getEstimatedMass();
+  double getThreshold();
+  double getAlpha();
+  size_t getNSamples();
+
+// PRIVATE FUNCTIONS
+
+private:
   /**
    * @brief
    * Computes the mass error based on the real and estimated mass
    * @param real_mass Real mass of the drone
    * @param estimated_mass Estimated mass of the drone
    */
-  void computeMassError(double & real_mass, double & estimated_mass);
+  bool computeMassError(double & estimated_mass, double & last_estimated_mass);
   /**
    * @brief
-   * Computes the correction factor based on the real and estimated mass
-   * @param real_mass Real mass of the drone
-   * @param estimated_mass Estimated mass of the drone
+   * Computes the mean of a vector
+   * @param vec Vector to compute the mean
+   * @return Mean value of the vector
    */
-  void computeCorrectionFactor(double & real_mass, double & estimated_mass);
+  double computedMeanFromVector(std::vector<double> & vec);
   /**
    * @brief
-   * Computes the RMSE based on the real and estimated mass
-   * @param real_mass Real mass of the drone
-   * @param estimated_mass Estimated mass of the drone
+   * Compute a low pass filter for the mass data
+   * @param mass Mass value to filter
+   * @return Filtered mass value
    */
-  void ComputeRMSE();
-
-
-  // PUBLIC FUNCTIONS -> getters
-
-public:
-  void computeAll(float & thrust, double & a_z);
-  double getEstimatedMass();
-  double getRealMass();
-  double getMassError();
-  double getCorrectionFactor();
-  float getThrust();
-  double getAcceleration();
-
-  const std::vector<double> & getMassHistory();
-  const std::vector<float> & getThrustHistory();
-  const std::vector<float> & getThrustTimeHistory();
-  const std::vector<double> & getAccelerationHistory();
-  const std::vector<double> & getAccelerationTimeHistory();
-  const std::vector<double> & getMassErrorHistory();
-  const std::vector<double> & getCorrectionFactorHistory();
-
+  double lowPassFiltered(double & mass);
+  /**
+   * @brief
+   * Computes the mean of the last n samples of a vector
+   * @param vec Vector to compute the mean
+   * @return Mean value of the last n samples
+   */
+  double computedMeanFromNSamples(const std::vector<double> & vec);
 };
 
-#endif // __PARAM_ESTIMATION_HPP__
+#endif   // __PARAM_ESTIMATION_HPP__

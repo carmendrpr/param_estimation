@@ -32,29 +32,22 @@
  ********************************************************************************/
 #include <iostream>
 #include "param_estimation/param_estimation.hpp"
-#include "utils/csv_saver.hpp"
 
+void positiveValues()
+{
+  ParamEstimation param_estimation = ParamEstimation(1.52, 0.1, 0.5, 1);
+  std::vector<float> thrust = {14.896f, 17.0f, 12.0f};
+  std::vector<double> aceleration = {9.81, 9.7, 9.86, 9.78};
+  param_estimation.set_threshold(0.1);
+  for (auto & t : thrust) {
+    param_estimation.computeMass(t, aceleration);
+  }
+  double mass = param_estimation.getEstimatedMass();
+  printf("Filtered mass: %.2f\n", mass);
+}
 
 int main()
 {
-  ParamEstimation param_estimation(1.52);
-
-
-  auto now = std::chrono::system_clock::now();
-  std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-  std::stringstream timestamp_stream;
-  timestamp_stream << std::put_time(std::localtime(&now_c), "%Y%m%d_%H%M%S");
-  std::string timestamp = timestamp_stream.str();
-  std::string file_name = "mass_estimation_results_" + timestamp + ".csv";
-  CsvSaver logger(file_name);
-  logger.save(now_c, param_estimation);
-
-
-  // (Opcional) ejecutar alguna funcionalidad
-  std::cout << "Ejecutando estimador y logger..." << std::endl;
-  float thrust = 10.0; // Fuerza de empuje en Newtons
-  double acceleration = 2.0;   // Aceleración en m/s^2
-  param_estimation.computeAll(thrust, acceleration);
+  positiveValues();
   return 0;
-
 }

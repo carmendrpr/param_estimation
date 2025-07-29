@@ -4,11 +4,12 @@
   <version>0.0.1</version>
   <description>Parameter estimation module</description>
 
-  <maintainer email="c.derojas@upm.es">CArmen De Rojas</maintainer>
+  <maintainer email="c.derojas@upm.es">Carmen De Rojas</maintainer>
    <license>BSD-3-Clause</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-
+  
+  <depend>ament_cmake</depend>
   <depend>rclcpp</depend>
 
   <export>
