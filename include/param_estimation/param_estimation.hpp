@@ -106,7 +106,6 @@ private:
    * @return Mean value of the last n samples
    */
   double computedMeanFromNSamples(const std::vector<double> & vec);
-
 };
 
-#endif // __PARAM_ESTIMATION_HPP__
+#endif   // __PARAM_ESTIMATION_HPP__

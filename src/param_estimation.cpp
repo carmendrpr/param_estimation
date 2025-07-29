@@ -38,6 +38,7 @@ ParamEstimation::ParamEstimation(
   size_t n_samples)
 {
   last_estimated_mass_ = initial_mass;
+  last_filtered_mass_ = initial_mass;
   threshold_ = threshold;
   alpha_ = alpha;
   n_samples_ = n_samples;
